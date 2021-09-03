@@ -81,16 +81,17 @@ module Minitest
 
       def parse_xml_for(xml, suite, tests)
         suite_result = analyze_suite(tests)
-        file_path = get_relative_path(tests.first)
+        suite_file_path = get_relative_path(tests.first)
 
-        xml.testsuite(:name => suite, :filepath => file_path,
+        xml.testsuite(:name => suite, :filepath => suite_file_path,
                       :skipped => suite_result[:skip_count], :failures => suite_result[:fail_count],
                       :errors => suite_result[:error_count], :tests => suite_result[:test_count],
                       :assertions => suite_result[:assertion_count], :time => suite_result[:time]) do
           tests.each do |test|
             lineno = get_source_location(test).last
+            test_file_path = get_relative_path(test)
             xml.testcase(:name => test.name, :lineno => lineno, :classname => suite, :assertions => test.assertions,
-                         :time => test.time, :file => file_path) do
+                         :time => test.time, :file => test_file_path) do
               xml << xml_message_for(test) unless test.passed?
             end
           end
